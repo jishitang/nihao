@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <!-- 主配置文件：带缓存功能的配置加载（context:property-placeholder 方式无缓存且会多文件合并） -->
+    <bean id="configProvider" class="cn.webank.common.conf.ConfigProvider">
+        <property name="locations">
+            <list>
+                <value>classpath:application.properties</value>
+            </list>
+        </property>
+        <property name="fileEncoding" value="UTF-8"/>
+    </bean>
+
+    <bean id="channelService" class="cn.webank.channel.client.Service">
+
+        <property name="orgID" value="WBOTS"/>
+
+        <property name="threadPool">
+            <bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+                <property name="corePoolSize" value="50" />
+                <property name="maxPoolSize" value="1000" />
+                <property name="queueCapacity" value="500" />
+                <property name="keepAliveSeconds" value="60" />
+                <property name="rejectedExecutionHandler">
+                    <bean class="java.util.concurrent.ThreadPoolExecutor.AbortPolicy" />
+                </property>
+            </bean>
+        </property>
+
+        <property name="allChannelConnections">
+            <map>
+                <entry key="WBOTS">
+                    <bean class="cn.webank.channel.handler.ChannelConnections">
+                        <property name="connectionsStr">
+                            <list>
+                                <!--配置港中银的区块链节点的node id @ 港中银的前置的ip和链上链下服务监听端口端口-->
+                                <value>c94168edc97884f277a28ab1d37efcb87e42d2996b5ae01dab7d0779bc1eff30b8e83d434539b458e7e939a39e1985c6a3863450e365f55c24780f2cded11ee4@202.127.170.170:8831</value>
+                            </list>
+                        </property>
+                    </bean>
+                </entry>
+                <entry key="BOCHK">
+                    <bean class="cn.webank.channel.handler.ChannelConnections">
+                        <property name="connectionsStr">
+                            <list>
+                                <!--配置港中银的区块链节点的node id @ 港中银的前置的ip和链上链下服务监听端口端口-->
+                                <value>da1536c116e9bbd181775ed9b03fa8a19b2306680e51cf92010471c9d8fbb3299edb73cead3fcedeeb9494e082b65eab3d66404485d001ef56f82ff5f096ec03</value>
+                            </list>
+                        </property>
+                    </bean>
+                </entry>
+                <entry key="WB">
+                    <bean class="cn.webank.channel.handler.ChannelConnections">
+                        <property name="connectionsStr">
+                            <list>
+                                <!--配置WeBank区块链节点的 node id list-->
+                                <!--每个节点都需要配置-->
+                                <value>06be09017ad1bb2d48766a1017ea337c2b6be14675249172bdf1447e0577f0b534ea3a41894d55e9a8df23d76b4f554bce4129d94029be799004453d9cda41ba</value>
+                                <value>8cfae9423b9190366aa9d902e05e020db33a0608f9fdc6f403eb811fa5a602d9f8e8add944ba4b000f8282ac6e64605f4a28b0eed3879e61b90786409a329351</value>
+                            </list>
+                        </property>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+    <!--<bean id="config" class="cn.webank.common.conf.Config">-->
+    <!--</bean>-->
+
+</beans>

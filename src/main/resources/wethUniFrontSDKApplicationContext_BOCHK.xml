@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <!-- 主配置文件：带缓存功能的配置加载（context:property-placeholder 方式无缓存且会多文件合并） -->
+    <bean id="configProvider" class="cn.webank.common.conf.ConfigProvider">
+        <property name="locations">
+            <list>
+                <value>classpath:application.properties</value>
+            </list>
+        </property>
+        <property name="fileEncoding" value="UTF-8"/>
+    </bean>
+
+    <bean id="channelService" class="cn.webank.channel.client.Service">
+
+        <property name="orgID" value="wepop"/>
+
+        <property name="threadPool">
+            <bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+                <property name="corePoolSize" value="50" />
+                <property name="maxPoolSize" value="1000" />
+                <property name="queueCapacity" value="500" />
+                <property name="keepAliveSeconds" value="60" />
+                <property name="rejectedExecutionHandler">
+                    <bean class="java.util.concurrent.ThreadPoolExecutor.AbortPolicy" />
+                </property>
+            </bean>
+        </property>
+
+        <property name="allChannelConnections">
+            <map>
+                <entry key="wepop">
+                    <bean class="cn.webank.channel.handler.ChannelConnections">
+                        <property name="connectionsStr">
+                            <list>
+                                <!--港中银的前置的ip和链上链下服务监听端口-->
+                                <!--每个前置一行，注意</value>不能换行，否则又问题-->
+                                <value>wepop@10.33.196.51:8831</value>
+                                <value>wepop@10.33.196.52:8831</value>
+                            </list>
+                        </property>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+</beans>
