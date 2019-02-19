@@ -35,7 +35,7 @@ public class ChannelExecutor {
 		
 		ChannelEthereumService channelEthereumService = new ChannelEthereumService();
 		channelEthereumService.setChannelService(service);
-		web3j = Web3j.build(channelEthereumService);
+		web3j = Web3j.build(channelEthereumService, service.getGroupId());
 		
 		if(null == web3j)
 		{
