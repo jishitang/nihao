@@ -101,7 +101,7 @@ public class BaseIssuingBankClientImpl extends BaseClientImpl {
 			service.run();
 			ChannelEthereumService channelEthereumService = new ChannelEthereumService();
 			channelEthereumService.setChannelService(service);
-			web3j = Web3j.build(channelEthereumService);
+			web3j = Web3j.build(channelEthereumService, service.getGroupId());
 			//等待初始化
 			Thread.sleep(2000);
 		} 
