@@ -119,7 +119,7 @@ jar {
 			into 'dist/lib'
 		}
 		copy {
-			from file('.').listFiles().findAll{File f -> (f.name.endsWith('.sh') || f.name.endsWith('.env'))}
+			from file('utils/').listFiles().findAll{File f -> (f.name.endsWith('.sh') && !f.name.startsWith('wepop'))}
 			into 'dist'
 		}
 		copy {

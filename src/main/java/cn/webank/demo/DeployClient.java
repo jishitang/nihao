@@ -5,6 +5,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.util.Properties;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -142,7 +145,7 @@ public class DeployClient {
 			
 			BigInteger acquirer_balance = acquirerBank.currentBalance().send();
 			BigInteger acquirer_credit = acquirerBank.credit().send();
-			System.out.println("acquirer: " + acquirer_balance + " - " + acquirer_credit);
+//			System.out.println("acquirer: " + acquirer_balance + " - " + acquirer_credit);
 			System.out.println("==============================End==============================");
 			System.out.println("业务合约部署完成！");
 			
@@ -150,14 +153,11 @@ public class DeployClient {
 			System.out.println("发卡行合约(issuingBank)地址：" + issueBank.getContractAddress());
 			System.out.println("收单行合约(acquirerBank)地址：" + acquirerBank.getContractAddress());
 			
-//	        Properties prop = new Properties();
 			final Resource contractResource = new ClassPathResource("application.properties");
 			PropertiesConfiguration prop = new PropertiesConfiguration(contractResource.getFile());
 	        prop.setProperty("bank.blockchain.clearingBank.contractaddress", clearCenter.getContractAddress());
 	        prop.setProperty("bank.blockchain.issuingBank.contractaddress", issueBank.getContractAddress());
 	        prop.setProperty("bank.blockchain.acquirerBank.contractaddress", acquirerBank.getContractAddress());
-//	        FileOutputStream fos = new FileOutputStream(contractResource.getFile());
-//	        prop.store(fos, "contract address");
 	        prop.save();
 	        System.out.println("保存三个合约地址成功!");
 
@@ -178,12 +178,17 @@ public class DeployClient {
 		return strBuilder.toString();
 	}
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
 
 		// init the Service
 		ApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
 		Service service = context.getBean(Service.class);
-		service.run(); // run the daemon service
+		try {
+			service.run();// run the daemon service
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return;
+		} 
 
 		// init the client keys
 		keyPair = Keys.createEcKeyPair();
@@ -196,7 +201,7 @@ public class DeployClient {
 
 		ChannelEthereumService channelEthereumService = new ChannelEthereumService();
 		channelEthereumService.setChannelService(service);
-		web3j = Web3j.build(channelEthereumService);
+		web3j = Web3j.build(channelEthereumService, service.getGroupId());
 
 		deploy();
 
