@@ -2,7 +2,7 @@
 
 ## 1. 获取源码
 ```
-git clone https://github.com/fqliao/we-pop.git
+git clone https://github.com/jishitang/we-pop.git
 ```
 
 ## 2. 配置
