@@ -2,7 +2,7 @@
 
 ## 1. 获取源码
 ```
-git clone https://github.com/jishitang/we-pop.git
+https://github.com/jishitang/wepop/edit/master/README.md
 ```
 
 ## 2. 配置
